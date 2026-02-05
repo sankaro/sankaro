@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heman | Ethical Hacker Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;700&display=swap');
+
+        :root {
+            --cyber-red: #ff0000;
+            --dark-red: #8b0000;
+            --bg-black: #0a0a0a;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: #e0e0e0;
+            font-family: 'Fira Code', monospace;
+            overflow-x: hidden;
+        }
+
+        .glitch-text {
+            text-shadow: 2px 0 var(--cyber-red), -2px 0 #fff;
+            animation: glitch 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .red-gradient-border {
+            border: 1px solid var(--dark-red);
+            position: relative;
+            background: linear-gradient(145deg, #121212, #000);
+            transition: all 0.3s ease;
+        }
+
+        .red-gradient-border:hover {
+            border-color: var(--cyber-red);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 5px 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot { height: 10px; width: 10px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        canvas#matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: var(--dark-red); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cyber-red); }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0) 100%);
+            opacity: 0.1;
+            position: fixed;
+            bottom: 100%;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100px; }
+        }
+
+        .skill-bar-inner {
+            height: 100%;
+            background: var(--cyber-red);
+            box-shadow: 0 0 10px var(--cyber-red);
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <canvas id="matrix"></canvas>
+    <div class="scanline"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-red-900/30">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold tracking-tighter">
+                <span class="text-red-600">HEMAN</span><span class="text-white">_LOG</span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
+                <a href="#home" class="hover:text-red-500 transition">Entry</a>
+                <a href="#about" class="hover:text-red-500 transition">Intel</a>
+                <a href="#skills" class="hover:text-red-500 transition">Toolkit</a>
+                <a href="#contact" class="hover:text-red-500 transition">Signal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex flex-col items-center justify-center pt-20 px-6">
+        <div class="text-center">
+            <p class="text-red-500 mb-2 tracking-[0.3em] text-xs md:text-sm uppercase">Secure the perimeter</p>
+            <h1 class="text-6xl md:text-8xl font-bold mb-4 glitch-text">HEMAN</h1>
+            <h2 class="text-xl md:text-2xl text-gray-400 mb-8 lowercase">
+                &lt; <span id="typewriter"></span> <span class="animate-pulse">_</span> &gt;
+            </h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#about" class="px-8 py-3 bg-red-700 hover:bg-red-600 text-white transition-all border border-red-500">View Dossier</a>
+                <a href="#contact" class="px-8 py-3 border border-red-700 hover:bg-red-900/20 transition-all">Encrypted Message</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Console Section -->
+    <section class="max-w-4xl mx-auto px-6 mb-20">
+        <div class="red-gradient-border rounded-lg overflow-hidden">
+            <div class="terminal-header">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+                <span class="ml-2 text-xs text-gray-500">root@heman:~</span>
+            </div>
+            <div class="p-6 text-sm text-green-500/80 min-h-[200px]" id="terminal-content">
+                <div>[+] Initializing environment...</div>
+                <div class="text-red-500">[!] Accessing restricted nodes...</div>
+                <div>[+] Connection established via proxy 127.0.0.1</div>
+                <div>[+] Welcome back, Heman. Your targets are secured.</div>
+                <div class="mt-4"><span class="text-white">guest@portfolio:~$</span> <span class="text-white typing-sim">whoami</span></div>
+                <div class="text-gray-400 mt-2">I am an Ethical Hacker and Cyber Security Researcher specialized in Penetration Testing and Vulnerability Assessment. I bridge the gap between discovery and defense.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Intel / About Section -->
+    <section id="about" class="py-20 px-6 bg-stone-950/50">
+        <div class="max-w-6xl mx-auto">
+            <h3 class="text-3xl font-bold mb-12 border-l-4 border-red-600 pl-4 uppercase tracking-tighter">System Intel</h3>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        I am Heman, a security professional dedicated to breaking systems to build them back stronger. My approach combines deep technical knowledge of exploit vectors with a strategic mindset for risk mitigation.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Whether it's web application security, network hardening, or social engineering simulation, my mission is to stay ahead of malicious actors through constant research and adversarial thinking.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 mt-8">
+                        <div class="p-4 border border-red-900/30 rounded bg-black/40">
+                            <h4 class="text-red-500 font-bold">50+</h4>
+                            <p class="text-xs text-gray-500 uppercase">Vulnerabilities Patched</p>
+                        </div>
+                        <div class="p-4 border border-red-900/30 rounded bg-black/40">
+                            <h4 class="text-red-500 font-bold">CTF</h4>
+                            <p class="text-xs text-gray-500 uppercase">Top 10 Rankings</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-red-600/10 blur-xl rounded-full"></div>
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1000" alt="Cybersecurity" class="relative rounded border border-red-600/50 grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl shadow-red-900/20">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h3 class="text-3xl font-bold mb-12 border-l-4 border-red-600 pl-4 uppercase tracking-tighter">Toolkit & Expertise</h3>
+            <div class="grid md:grid-cols-2 gap-x-16 gap-y-8">
+                <!-- Skill 1 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm uppercase tracking-widest">Penetration Testing</span>
+                        <span class="text-sm text-red-500">95%</span>
+                    </div>
+                    <div class="h-1 w-full bg-red-900/20">
+                        <div class="skill-bar-inner" style="width: 95%;"></div>
+                    </div>
+                </div>
+                <!-- Skill 2 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm uppercase tracking-widest">Network Security</span>
+                        <span class="text-sm text-red-500">90%</span>
+                    </div>
+                    <div class="h-1 w-full bg-red-900/20">
+                        <div class="skill-bar-inner" style="width: 90%;"></div>
+                    </div>
+                </div>
+                <!-- Skill 3 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm uppercase tracking-widest">Malware Analysis</span>
+                        <span class="text-sm text-red-500">85%</span>
+                    </div>
+                    <div class="h-1 w-full bg-red-900/20">
+                        <div class="skill-bar-inner" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <!-- Skill 4 -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm uppercase tracking-widest">Python & Bash Automation</span>
+                        <span class="text-sm text-red-500">88%</span>
+                    </div>
+                    <div class="h-1 w-full bg-red-900/20">
+                        <div class="skill-bar-inner" style="width: 88%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16">
+                <div class="red-gradient-border p-6 rounded text-center">
+                    <i class="fas fa-shield-alt text-2xl text-red-600 mb-3"></i>
+                    <h5 class="text-xs font-bold uppercase">Red Teaming</h5>
+                </div>
+                <div class="red-gradient-border p-6 rounded text-center">
+                    <i class="fas fa-bug text-2xl text-red-600 mb-3"></i>
+                    <h5 class="text-xs font-bold uppercase">Bug Bounty</h5>
+                </div>
+                <div class="red-gradient-border p-6 rounded text-center">
+                    <i class="fas fa-search-dollar text-2xl text-red-600 mb-3"></i>
+                    <h5 class="text-xs font-bold uppercase">Forensics</h5>
+                </div>
+                <div class="red-gradient-border p-6 rounded text-center">
+                    <i class="fas fa-lock text-2xl text-red-600 mb-3"></i>
+                    <h5 class="text-xs font-bold uppercase">Encryption</h5>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 bg-stone-950/50">
+        <div class="max-w-4xl mx-auto text-center">
+            <h3 class="text-4xl font-bold mb-4 glitch-text">ESTABLISH CONNECTION</h3>
+            <p class="text-gray-500 mb-12">Encrypted communication channel is open.</p>
+            
+            <form class="space-y-4" onsubmit="event.preventDefault(); handleSend();">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <input type="text" placeholder="IDENTITY" class="w-full bg-black border border-red-900/50 p-4 rounded focus:border-red-600 outline-none text-red-500 placeholder:text-red-900/50">
+                    <input type="email" placeholder="ENCRYPTED_EMAIL" class="w-full bg-black border border-red-900/50 p-4 rounded focus:border-red-600 outline-none text-red-500 placeholder:text-red-900/50">
+                </div>
+                <textarea rows="5" placeholder="PAYLOAD_MESSAGE" class="w-full bg-black border border-red-900/50 p-4 rounded focus:border-red-600 outline-none text-red-500 placeholder:text-red-900/50"></textarea>
+                <button id="sendBtn" class="w-full py-4 bg-red-700 hover:bg-red-600 text-white font-bold tracking-widest uppercase transition-all">Send Signal</button>
+            </form>
+
+            <div class="mt-12 flex justify-center space-x-6">
+                <a href="#" class="text-2xl text-red-900 hover:text-red-500 transition"><i class="fab fa-github"></i></a>
+                <a href="#" class="text-2xl text-red-900 hover:text-red-500 transition"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-2xl text-red-900 hover:text-red-500 transition"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-8 text-center text-xs text-gray-700 border-t border-red-900/10">
+        <p>© 2024 HEMAN | ALL RIGHTS RESERVED | SECURITY LEVEL: CLEARANCE RED</p>
+    </footer>
+
+    <script>
+        // Matrix Background Effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const alphabet = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#%^&*()*&^%';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const rainDrops = Array.from({ length: columns }).fill(1);
+
+        const drawMatrix = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#ff0000'; // Matrix Red
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[i] = 0;
+                }
+                rainDrops[i]++;
+            }
+        };
+
+        setInterval(drawMatrix, 50);
+
+        // Typewriter Effect
+        const phrases = ["Ethical Hacker", "Security Researcher", "Penetration Tester", "Cyber Defender"];
+        let phraseIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+        const typewriterEl = document.getElementById('typewriter');
+
+        function type() {
+            const currentPhrase = phrases[phraseIdx];
+            if (isDeleting) {
+                typewriterEl.textContent = currentPhrase.substring(0, charIdx - 1);
+                charIdx--;
+            } else {
+                typewriterEl.textContent = currentPhrase.substring(0, charIdx + 1);
+                charIdx++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIdx === currentPhrase.length) {
+                isDeleting = true;
+                typeSpeed = 2000; // Pause at end
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                phraseIdx = (phraseIdx + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(type, typeSpeed);
+        }
+
+        window.onload = type;
+
+        // Form feedback
+        function handleSend() {
+            const btn = document.getElementById('sendBtn');
+            const originalText = btn.innerText;
+            btn.innerText = "TRANSMITTING...";
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            
+            setTimeout(() => {
+                btn.innerText = "SIGNAL DELIVERED";
+                btn.style.backgroundColor = "#27c93f";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = "";
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                }, 3000);
+            }, 1500);
+        }
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Dynamic Resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
